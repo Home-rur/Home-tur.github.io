@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Профессиональные 3D туры по недвижимости с эффектом присутствия">
+    <title>3D Туры по недвижимости | Виртуальные экскурсии</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #f5f5f5;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: var(--primary-color);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+        }
+        
+        h1, h2, h3 {
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+        }
+        
+        .section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        
+        ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .benefit-icon {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-top: 0.2rem;
+        }
+        
+        .access-form {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .input-group {
+            display: flex;
+            margin: 1.5rem 0;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        button {
+            padding: 0 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .error {
+            color: var(--accent-color);
+            margin-top: 0.5rem;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .demo-tours {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .demo-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .demo-info {
+            padding: 1.2rem;
+        }
+        
+        .demo-info h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .demo-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 0.8rem;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1.5rem 0;
+            background-color: var(--dark-color);
+            color: var(--text-light);
+            margin-top: 3rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            input[type="text"] {
+                border-radius: 4px;
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+            
+            button {
+                border-radius: 4px;
+                padding: 0.8rem;
+                justify-content: center;
+            }
+            
+            .demo-tours {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-vr-cardboard"></i>
+            <span>3D Туры по недвижимости</span>
+        </div>
+        <p>Виртуальные экскурсии с эффектом присутствия</p>
+    </header>
+    
+    <div class="container">
+        <section class="section">
+            <h2>Преимущества 3D туров</h2>
+            <p>Наши интерактивные 3D туры позволяют полностью погрузиться в атмосферу недвижимости, предоставляя уникальный опыт просмотра, который значительно превосходит обычные фотографии.</p>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon"><i class="fas fa-clock"></i></div>
+                <div>
+                    <h3>Экономия времени</h3>
+                    <p>Позволяет потенциальным клиентам отсеять неподходящие варианты до личного осмотра, экономя время всех участников.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon"><i class="fas fa-globe"></i></div>
+                <div>
+                    <h3>Доступность 24/7</h3>
+                    <p>Возможность осмотра объекта в любое время суток из любой точки мира.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon"><i class="fas fa-ruler-combined"></i></div>
+                <div>
+                    <h3>Точное представление</h3>
+                    <p>Позволяет оценить реальные размеры и планировку, что сложно сделать по обычным фотографиям.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon"><i class="fas fa-chart-line"></i></div>
+                <div>
+                    <h3>Повышение доверия</h3>
+                    <p>Демонстрирует открытость и современный подход, увеличивая доверие к объекту.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon"><i class="fas fa-star"></i></div>
+                <div>
+                    <h3>Конкурентное преимущество</h3>
+                    <p>Выгодно выделяет ваш объект среди других предложений на рынке.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section access-form">
+            <h2>Доступ к вашему 3D туру</h2>
+            <p>Вставьте ссылку на ваш 3D тур ниже, чтобы начать виртуальную экскурсию:</p>
+            
+            <div class="input-group">
+                <input type="text" id="tour-link" placeholder="https://example.com/your-tour" aria-label="Ссылка на 3D тур">
+                <button onclick="redirectToTour()">
+                    <i class="fas fa-play"></i> Просмотр
+                </button>
+            </div>
+            
+            <p class="error" id="error-message">Пожалуйста, введите корректную ссылку (начинающуюся с http:// или https://)</p>
+            
+            <p><small>Пример: https://my-tour.example.com/3d-tour</small></p>
+        </section>
+        
+        <section class="section">
+            <h2>Примеры наших 3D туров</h2>
+            <p>Ознакомьтесь с демонстрационными турами, чтобы понять качество и возможности нашей технологии:</p>
+            
+            <div class="demo-tours">
+                <div class="demo-card">
+                    <div class="demo-image" style="background-image: url('https://example.com/demo1.jpg');"></div>
+                    <div class="demo-info">
+                        <h3>Современная квартира</h3>
+                        <p>2-комнатная квартира в новостройке</p>
+                        <a href="https://example.com/demo1" class="btn" target="_blank">Посмотреть тур</a>
+                    </div>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-image" style="background-image: url('https://example.com/demo2.jpg');"></div>
+                    <div class="demo-info">
+                        <h3>Загородный дом</h3>
+                        <p>Просторный коттедж с участком</p>
+                        <a href="https://example.com/demo2" class="btn" target="_blank">Посмотреть тур</a>
+                    </div>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-image" style="background-image: url('https://example.com/demo3.jpg');"></div>
+                    <div class="demo-info">
+                        <h3>Офисное помещение</h3>
+                        <p>Бизнес-центр класса А</p>
+                        <a href="https://example.com/demo3" class="btn" target="_blank">Посмотреть тур</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#"><i class="fas fa-phone-alt"></i> Контакты</a>
+            <a href="#"><i class="fas fa-question-circle"></i> FAQ</a>
+            <a href="#"><i class="fas fa-camera"></i> Заказать 3D тур</a>
+        </div>
+        <p>© 2023 3D Туры по недвижимости. Все права защищены.</p>
+    </footer>
+    
+    <script>
+        function redirectToTour() {
+            const linkInput = document.getElementById('tour-link');
+            const errorMessage = document.getElementById('error-message');
+            let tourUrl = linkInput.value.trim();
+            
+            // Проверка на пустую строку
+            if (!tourUrl) {
+                showError("Пожалуйста, введите ссылку на тур");
+                return;
+            }
+            
+            // Добавление https:// если отсутствует
+            if (!tourUrl.startsWith('http://') && !tourUrl.startsWith('https://')) {
+                tourUrl = 'https://' + tourUrl;
+            }
+            
+            // Валидация URL
+            try {
+                new URL(tourUrl);
+            } catch (e) {
+                showError("Пожалуйста, введите корректную ссылку");
+                return;
+            }
+            
+            // Перенаправление
+            window.location.href = tourUrl;
+        }
+        
+        function showError(message) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            
+            // Автоматическое скрытие через 5 секунд
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Обработка нажатия Enter в поле ввода
+        document.getElementById('tour-link').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                redirectToTour();
+            }
+        });
+        
+        // Анализ URL при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const tourUrl = params.get('tour');
+            
+            if (tourUrl) {
+                document.getElementById('tour-link').value = tourUrl;
+                redirectToTour();
+            }
+        });
+    </script>
+</body>
+</html>
