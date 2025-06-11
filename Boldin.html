@@ -95,11 +95,19 @@
             display: flex;
             gap: 8px;
             backdrop-filter: blur(5px);
+            transition: all var(--transition-speed) ease;
         }
         
         .view-toggle {
             top: 10px;
             left: 10px;
+            opacity: 0.3;
+            transform: translateY(-10px);
+        }
+        
+        .view-toggle:hover, .view-toggle:focus-within {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .mode-toggle {
@@ -108,8 +116,8 @@
         }
         
         .orientation-toggle {
-            bottom: 100px;
-            right: 50px;
+            bottom: 10px;
+            right: 10px;
             display: none;
         }
         
@@ -280,6 +288,11 @@
                 display: block;
             }
             
+            .view-toggle {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
             /* Режим альбомной ориентации */
             body.landscape {
                 flex-direction: row;
@@ -315,12 +328,6 @@
                 width: 100%;
                 height: 100%;
             }
-        }
-        
-        /* Анимация поворота */
-        @keyframes rotateAnimation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(90deg); }
         }
     </style>
 </head>
@@ -434,7 +441,8 @@
                     panoramaTitle: document.getElementById('panorama-title')
                 },
                 hotspots: document.querySelectorAll('.hotspot'),
-                body: document.body
+                body: document.body,
+                viewToggle: document.querySelector('.view-toggle')
             };
 
             // Состояние приложения
@@ -445,7 +453,8 @@
                 pannellumViewer: null,
                 isLandscape: false,
                 isFullscreenPanorama: false,
-                isFullscreenPlan: false
+                isFullscreenPlan: false,
+                hideTimeout: null
             };
 
             // Проверка мобильного устройства
@@ -490,6 +499,28 @@
                     });
                     hotspot.addEventListener('mouseenter', () => preloadRoomResources(hotspot.dataset.room));
                 });
+
+                // Управление видимостью кнопок переключения вида
+                if (!isMobile) {
+                    elements.viewToggle.addEventListener('mouseenter', () => {
+                        clearTimeout(state.hideTimeout);
+                        elements.viewToggle.style.opacity = '1';
+                        elements.viewToggle.style.transform = 'translateY(0)';
+                    });
+
+                    elements.viewToggle.addEventListener('mouseleave', () => {
+                        state.hideTimeout = setTimeout(() => {
+                            elements.viewToggle.style.opacity = '0.3';
+                            elements.viewToggle.style.transform = 'translateY(-10px)';
+                        }, 1000);
+                    });
+
+                    // Скрываем кнопки через 3 секунды после загрузки
+                    state.hideTimeout = setTimeout(() => {
+                        elements.viewToggle.style.opacity = '0.3';
+                        elements.viewToggle.style.transform = 'translateY(-10px)';
+                    }, 3000);
+                }
             }
 
             // Настройка обработчиков ориентации для мобильных
@@ -802,19 +833,6 @@
                 setMode(state.currentMode);
                 if (state.currentRoom) loadRoom(state.currentRoom);
             });
-
-            // Блокировка ориентации для мобильных устройств
-            function lockOrientation() {
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(() => {});
-                } else if (screen.lockOrientation) {
-                    screen.lockOrientation('landscape');
-                } else if (screen.mozLockOrientation) {
-                    screen.mozLockOrientation('landscape');
-                } else if (screen.msLockOrientation) {
-                    screen.msLockOrientation('landscape');
-                }
-            }
 
             init();
         });
