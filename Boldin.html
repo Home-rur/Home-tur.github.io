@@ -95,19 +95,11 @@
             display: flex;
             gap: 8px;
             backdrop-filter: blur(5px);
-            transition: all var(--transition-speed) ease;
         }
         
         .view-toggle {
             top: 10px;
             left: 10px;
-            opacity: 0.3;
-            transform: translateY(-10px);
-        }
-        
-        .view-toggle:hover, .view-toggle:focus-within {
-            opacity: 1;
-            transform: translateY(0);
         }
         
         .mode-toggle {
@@ -288,11 +280,6 @@
                 display: block;
             }
             
-            .view-toggle {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            
             /* Режим альбомной ориентации */
             body.landscape {
                 flex-direction: row;
@@ -329,6 +316,12 @@
                 height: 100%;
             }
         }
+        
+        /* Анимация поворота */
+        @keyframes rotateAnimation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(90deg); }
+        }
     </style>
 </head>
 <body>
@@ -339,8 +332,8 @@
         </div>
         
         <div class="view-section top-view">
-            <img id="top-exterior" class="view-image" src="Дом/Разрез2снаружи.png" alt="Вид сверху здания снаружи" loading="lazy">
-            <img id="top-interior" class="view-image" src="Дом/Рендер2.png" alt="Вид сверху здания изнутри" loading="lazy" style="display:none">
+            <img id="top-exterior" class="view-image" src="Дом/Разрез2снаружи.png" alt="Вид сзади здания снаружи" loading="lazy">
+            <img id="top-interior" class="view-image" src="Дом/Рендер2.png" alt="Вид сзади здания изнутри" loading="lazy" style="display:none">
             
             <div class="hotspot" style="top:38%;left:54%" data-room="living_room" data-room-name="Гостиная" tabindex="0" aria-label="Перейти в гостиную"></div>
             <div class="hotspot" style="top:45%;left:42%" data-room="kitchen" data-room-name="Кухня" tabindex="0" aria-label="Перейти на кухню"></div>
@@ -353,8 +346,8 @@
         </div>
         
         <div class="view-section bottom-view">
-            <img id="bottom-exterior" class="view-image" src="Дом/Разрез1снаружи.png" alt="Вид снизу здания снаружи" loading="lazy">
-            <img id="bottom-interior" class="view-image" src="Дом/Разрез1.png" alt="Вид снизу здания изнутри" loading="lazy" style="display:none">
+            <img id="bottom-exterior" class="view-image" src="Дом/Разрез1снаружи.png" alt="Вид спереди здания снаружи" loading="lazy">
+            <img id="bottom-interior" class="view-image" src="Дом/Разрез1.png" alt="Вид спереди здания изнутри" loading="lazy" style="display:none">
             
             <div class="hotspot" style="top:45%;left:54%" data-room="living_room" data-room-name="Гостиная" tabindex="0" aria-label="Перейти в гостиную"></div>
             <div class="hotspot" style="top:30%;left:66%" data-room="kitchen" data-room-name="Кухня" tabindex="0" aria-label="Перейти на кухню"></div>
@@ -375,7 +368,6 @@
         </div>
         
         <div class="control-panel orientation-toggle">
-            <button id="rotate-screen">Повернуть экран</button>
             <button id="fullscreen-panorama">Полный экран</button>
             <button id="fullscreen-plan">Только план</button>
         </div>
@@ -441,8 +433,7 @@
                     panoramaTitle: document.getElementById('panorama-title')
                 },
                 hotspots: document.querySelectorAll('.hotspot'),
-                body: document.body,
-                viewToggle: document.querySelector('.view-toggle')
+                body: document.body
             };
 
             // Состояние приложения
@@ -453,8 +444,7 @@
                 pannellumViewer: null,
                 isLandscape: false,
                 isFullscreenPanorama: false,
-                isFullscreenPlan: false,
-                hideTimeout: null
+                isFullscreenPlan: false
             };
 
             // Проверка мобильного устройства
@@ -499,28 +489,6 @@
                     });
                     hotspot.addEventListener('mouseenter', () => preloadRoomResources(hotspot.dataset.room));
                 });
-
-                // Управление видимостью кнопок переключения вида
-                if (!isMobile) {
-                    elements.viewToggle.addEventListener('mouseenter', () => {
-                        clearTimeout(state.hideTimeout);
-                        elements.viewToggle.style.opacity = '1';
-                        elements.viewToggle.style.transform = 'translateY(0)';
-                    });
-
-                    elements.viewToggle.addEventListener('mouseleave', () => {
-                        state.hideTimeout = setTimeout(() => {
-                            elements.viewToggle.style.opacity = '0.3';
-                            elements.viewToggle.style.transform = 'translateY(-10px)';
-                        }, 1000);
-                    });
-
-                    // Скрываем кнопки через 3 секунды после загрузки
-                    state.hideTimeout = setTimeout(() => {
-                        elements.viewToggle.style.opacity = '0.3';
-                        elements.viewToggle.style.transform = 'translateY(-10px)';
-                    }, 3000);
-                }
             }
 
             // Настройка обработчиков ориентации для мобильных
@@ -833,6 +801,19 @@
                 setMode(state.currentMode);
                 if (state.currentRoom) loadRoom(state.currentRoom);
             });
+
+            // Блокировка ориентации для мобильных устройств
+            function lockOrientation() {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                } else if (screen.lockOrientation) {
+                    screen.lockOrientation('landscape');
+                } else if (screen.mozLockOrientation) {
+                    screen.mozLockOrientation('landscape');
+                } else if (screen.msLockOrientation) {
+                    screen.msLockOrientation('landscape');
+                }
+            }
 
             init();
         });
